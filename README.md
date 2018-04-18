@@ -11,3 +11,17 @@ In Windows platform run:
 ```
 mvnw.bat spring-boot:run
 ```
+
+## How to see database
+```
+http://localhost:8080/h2-console
+```
+
+The database is configured under
+```
+jdbc:h2:mem:ecommerce-test
+```
+
+## Assumptions
+
+1. Currency is always in Peso Argentino (ARS)

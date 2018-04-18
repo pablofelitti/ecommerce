@@ -1,3 +1,13 @@
 spring:
+  h2:
+    console: true
   flyway:
     enabled: false
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:h2:mem:ecommerce-test
+    username: sa
+    password:
