@@ -5,7 +5,7 @@ public enum CartStatus {
     /**
      * Cart is still being processed by the customer
      */
-    PENDING,
+    NEW,
 
     /**
      * Payment has been succesfully processed
