@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 @Component
 public class CartDTOConverter implements Converter<Cart, CartDTO> {
 
+    //TODO should we create an utils for this?
     private static final String ISO_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     @Override
