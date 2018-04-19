@@ -43,6 +43,7 @@ public class CartServiceImpl implements CartService {
     public CartDTO create(final CartCreationDTO cartCreationDTO) {
         Cart newCart = cartCreationDTOConverter.convert(cartCreationDTO);
 
+        //TODO this validations should be refactored
         validateParameters(cartCreationDTO);
 
         initializeNewCart(newCart);
