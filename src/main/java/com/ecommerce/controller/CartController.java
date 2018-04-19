@@ -25,9 +25,6 @@ public class CartController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CartDTO> createCart(@RequestBody final CartCreationDTO cartCreationDTO) {
-
-        //TODO we still need to implement exception handling
-
         return new ResponseEntity<>(cartService.create(cartCreationDTO), HttpStatus.OK);
     }
 }
