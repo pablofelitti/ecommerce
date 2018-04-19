@@ -16,4 +16,10 @@ public class GlobalExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(new ErrorInfo(ex.getErrorCode().getCode(), ex.getErrorCode().getMessage()));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<ErrorDetails> handleDefaultException(final Exception ex, final WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new ErrorInfo(ErrorCode.DEFAULT.getCode(), ErrorCode.DEFAULT.getMessage()));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
 }
