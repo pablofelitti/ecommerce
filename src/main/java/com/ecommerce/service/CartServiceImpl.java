@@ -2,8 +2,10 @@ package com.ecommerce.service;
 
 import com.ecommerce.converter.CartCreationDTOConverter;
 import com.ecommerce.converter.CartDTOConverter;
+import com.ecommerce.dto.AddCartProductDTO;
 import com.ecommerce.dto.CartCreationDTO;
 import com.ecommerce.dto.CartDTO;
+import com.ecommerce.dto.CartProductDTO;
 import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.CartStatus;
 import com.ecommerce.exception.ErrorCode;
@@ -53,7 +55,28 @@ public class CartServiceImpl implements CartService {
         return cartDTOConverter.convert(savedCart);
     }
 
-    private void validateParameters(CartCreationDTO cartCreationDTO) {
+    @Override
+    public CartProductDTO addProductToCart(final AddCartProductDTO addCartProductDTO) {
+        validateParameters(addCartProductDTO);
+
+        return null;
+    }
+
+    private void validateParameters(final AddCartProductDTO addCartProductDTO) {
+        if (addCartProductDTO.getProductId() == null) {
+            throw new MalformedRequestPayloadException(ErrorCode.PRODUCT_CANNOT_BE_EMPTY);
+        }
+
+        if (addCartProductDTO.getQuantity() == null) {
+            throw new MalformedRequestPayloadException(ErrorCode.PRODUCT_QUANTITY_CANNOT_BE_EMPTY);
+        }
+
+        if (addCartProductDTO.getQuantity() <= 0) {
+            throw new MalformedRequestPayloadException(ErrorCode.PRODUCT_QUANTITY_NEEDS_TO_BE_POSITIVE);
+        }
+    }
+
+    private void validateParameters(final CartCreationDTO cartCreationDTO) {
         if (StringUtils.isEmpty(cartCreationDTO.getFullName())) {
             throw new MalformedRequestPayloadException(ErrorCode.FULLNAME_CANNOT_BE_EMPTY);
         }
