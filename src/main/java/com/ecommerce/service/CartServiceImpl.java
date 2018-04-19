@@ -36,6 +36,9 @@ public class CartServiceImpl implements CartService {
         this.cartDTOConverter = cartDTOConverter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CartDTO create(final CartCreationDTO cartCreationDTO) {
         Cart newCart = cartCreationDTOConverter.convert(cartCreationDTO);

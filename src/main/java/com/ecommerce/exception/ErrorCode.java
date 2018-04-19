@@ -1,5 +1,8 @@
 package com.ecommerce.exception;
 
+/**
+ * Holds all of the different types of error messages
+ */
 public enum ErrorCode {
 
     FULLNAME_CANNOT_BE_EMPTY("ecommerce_cart_001", "Fullname cannot be empty"),

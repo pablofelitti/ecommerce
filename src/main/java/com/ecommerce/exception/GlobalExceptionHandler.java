@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+/**
+ * Responsible of handling exceptions for the API
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
