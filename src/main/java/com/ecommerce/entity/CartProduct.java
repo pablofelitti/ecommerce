@@ -9,14 +9,19 @@ public class CartProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "PRODUCT_ID")
     private Product product;
 
+    @Column(name = "QUANTITY")
     private Integer quantity;
 
+    @Column(name = "UNIT_PRICE")
     private BigDecimal unitPrice;
+
 
     public Long getId() {
         return id;

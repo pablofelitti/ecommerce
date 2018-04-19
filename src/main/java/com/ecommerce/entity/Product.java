@@ -1,21 +1,27 @@
 package com.ecommerce.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "PRODUCT")
-public class Product {
+public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
     private Long id;
 
+    @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "UNIT_PRICE")
     private BigDecimal unitPrice;
 
+    @Column(name = "STOCK")
     private Long stock;
+
 
     public Long getId() {
         return id;

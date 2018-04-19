@@ -11,21 +11,28 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
     private Long id;
 
+    @Column(name = "FULL_NAME")
     private String fullName;
 
+    @Column(name = "EMAIL")
     private String email;
 
-    private Date creation;
+    @Column(name = "CREATION_DATE")
+    private Date creationDate;
 
     @OneToMany(mappedBy = "product")
     private List<CartProduct> cartProducts;
 
+    @Column(name = "TOTAL")
     private BigDecimal total;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS")
     private CartStatus status;
+
 
     public Long getId() {
         return id;
@@ -51,12 +58,12 @@ public class Cart {
         this.email = email;
     }
 
-    public Date getCreation() {
-        return creation;
+    public Date getCreationDate() {
+        return creationDate;
     }
 
-    public void setCreation(Date creation) {
-        this.creation = creation;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public BigDecimal getTotal() {

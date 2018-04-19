@@ -9,7 +9,7 @@ In Linux/OSX run:
 
 In Windows platform run:
 ```
-mvnw.bat spring-boot:run
+mvnw.cmd spring-boot:run
 ```
 
 ## How to see database
