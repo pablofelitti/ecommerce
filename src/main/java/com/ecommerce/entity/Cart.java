@@ -19,7 +19,7 @@ public class Cart {
 
     private Date creation;
 
-    @OneToMany
+    @OneToMany(mappedBy = "product")
     private List<CartProduct> cartProducts;
 
     private BigDecimal total;

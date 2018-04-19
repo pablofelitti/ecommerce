@@ -2,11 +2,11 @@ spring:
   h2:
     console: true
   flyway:
-    enabled: false
+    enabled: true
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
   datasource:
     url: jdbc:h2:mem:ecommerce-test
     username: sa
