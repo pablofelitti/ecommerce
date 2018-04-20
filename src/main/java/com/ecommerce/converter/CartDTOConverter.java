@@ -27,9 +27,14 @@ public class CartDTOConverter implements Converter<Cart, CartDTO> {
 
         String convertedCreationDate = dateUtils.convertToISOFormat(cart.getCreationDate());
 
-        List<CartProductDTO> carts = cart.getCartProducts().stream().
+        List<CartProductDTO> carts = null;
+
+        //TODO is there something in stream api for these cases?
+        if (cart.getCartProducts() != null) {
+            carts = cart.getCartProducts().stream().
                 map(cartProductDTOConverter::convert).
                 collect(Collectors.toList());
+        }
 
         return new CartDTO(cart.getId(), cart.getFullName(), cart.getEmail(), convertedCreationDate,
                 carts, cart.getTotal(), cart.getStatus().toString());
