@@ -2,11 +2,13 @@ package com.ecommerce.validator;
 
 import com.ecommerce.dto.AddCartProductDTO;
 import com.ecommerce.entity.Cart;
+import com.ecommerce.entity.CartStatus;
 import com.ecommerce.entity.Product;
 import com.ecommerce.exception.ErrorCode;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.validator.rule.CartExistsRule;
+import com.ecommerce.validator.rule.CartStatusRule;
 import com.ecommerce.validator.rule.NullRule;
 import com.ecommerce.validator.rule.ProductExistsRule;
 import org.springframework.stereotype.Component;
@@ -30,6 +32,7 @@ public class CartProductCreationValidator {
 
         Product product = new ProductExistsRule(productRepository).validate(addCartProductDTO.getProductId());
         Cart cart = new CartExistsRule(cartRepository).validate(cartId);
+        new CartStatusRule(CartStatus.NEW, ErrorCode.CART_STATUS_NOT_NEW).validate(cart);
 
         return new CartProductValidationResult(cart, product);
     }

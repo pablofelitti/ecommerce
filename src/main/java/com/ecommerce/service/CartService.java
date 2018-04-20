@@ -12,4 +12,11 @@ public interface CartService {
      * @return created cart information
      */
     CartDTO create(CartCreationDTO cartCreationDTO);
+
+    /**
+     * Updates the total cart
+     *
+     * @param cartId Id of the cart to update
+     */
+    void updateTotalCart(Long cartId);
 }

@@ -9,8 +9,6 @@ import com.ecommerce.entity.Product;
 import com.ecommerce.exception.ErrorCode;
 import com.ecommerce.exception.MalformedRequestPayloadException;
 import com.ecommerce.repository.CartProductRepository;
-import com.ecommerce.repository.CartRepository;
-import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.validator.CartProductCreationValidator;
 import com.ecommerce.validator.CartProductValidationResult;
 import org.springframework.stereotype.Service;
@@ -20,21 +18,15 @@ import java.util.Optional;
 @Service
 public class CartProductServiceImpl implements CartProductService {
 
-    private ProductRepository productRepository;
     private CartProductRepository cartProductRepository;
     private CartProductDTOConverter cartProductDTOConverter;
-    private CartRepository cartRepository;
     private CartProductCreationValidator cartProductCreationValidator;
 
-    public CartProductServiceImpl(final ProductRepository productRepository,
-                                  final CartProductRepository cartProductRepository,
+    public CartProductServiceImpl(final CartProductRepository cartProductRepository,
                                   final CartProductDTOConverter cartProductDTOConverter,
-                                  final CartRepository cartRepository,
                                   final CartProductCreationValidator cartProductCreationValidator) {
-        this.productRepository = productRepository;
         this.cartProductRepository = cartProductRepository;
         this.cartProductDTOConverter = cartProductDTOConverter;
-        this.cartRepository = cartRepository;
         this.cartProductCreationValidator = cartProductCreationValidator;
     }
 
@@ -49,6 +41,8 @@ public class CartProductServiceImpl implements CartProductService {
                 validationResult.getCart(), validationResult.getProduct());
 
         CartProduct savedCartProduct = cartProductRepository.save(newCartProduct);
+
+        //TODO we need to update cart total
 
         return cartProductDTOConverter.convert(savedCartProduct);
     }
