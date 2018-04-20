@@ -12,6 +12,8 @@ import com.ecommerce.repository.CartProductRepository;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.validator.CartProductCreationValidator;
 import com.ecommerce.validator.CartProductValidationResult;
+import com.ecommerce.validator.DeleteCartProductValidationResult;
+import com.ecommerce.validator.DeleteProductFromCartValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,15 +31,18 @@ public class CartProductServiceImpl implements CartProductService {
     private CartRepository cartRepository;
     private CartProductDTOConverter cartProductDTOConverter;
     private CartProductCreationValidator cartProductCreationValidator;
+    private DeleteProductFromCartValidator deleteProductFromCartValidator;
 
     public CartProductServiceImpl(final CartProductRepository cartProductRepository,
                                   final CartRepository cartRepository,
                                   final CartProductDTOConverter cartProductDTOConverter,
-                                  final CartProductCreationValidator cartProductCreationValidator) {
+                                  final CartProductCreationValidator cartProductCreationValidator,
+                                  final DeleteProductFromCartValidator deleteProductFromCartValidator) {
         this.cartProductRepository = cartProductRepository;
         this.cartRepository = cartRepository;
         this.cartProductDTOConverter = cartProductDTOConverter;
         this.cartProductCreationValidator = cartProductCreationValidator;
+        this.deleteProductFromCartValidator = deleteProductFromCartValidator;
     }
 
     /**
@@ -49,24 +54,24 @@ public class CartProductServiceImpl implements CartProductService {
 
         Predicate<CartProduct> productExists = cp -> cp.getProduct().getId().equals(validationResult.getProduct().getId());
 
-        Optional<CartProduct> match = validationResult.getCart().getCartProducts().stream().
+        Optional<CartProduct> cartProductExisting = validationResult.getCart().getCartProducts().stream().
                 filter(productExists).
                 findFirst();
 
-        if (match.isPresent()) {
+        if (cartProductExisting.isPresent()) {
 
             LOGGER.debug("Product {} is present in the cart", addCartProductDTO.getProductId());
 
-            Integer finalQuantity = match.get().getQuantity() + addCartProductDTO.getQuantity();
+            Integer finalQuantity = cartProductExisting.get().getQuantity() + addCartProductDTO.getQuantity();
 
             LOGGER.debug("New quantity will be {}", finalQuantity);
 
             if (finalQuantity > 0) {
 
-                updateCartProduct(match.get(), finalQuantity);
+                updateCartProduct(cartProductExisting.get(), finalQuantity);
                 updateCartTotal(validationResult.getCart(), null);
 
-                return cartProductDTOConverter.convert(match.get());
+                return cartProductDTOConverter.convert(cartProductExisting.get());
             } else {
                 throw new MalformedRequestPayloadException(ErrorCode.CART_PRODUCT_QUANTITY_MUST_BE_POSITIVE);
             }
@@ -81,6 +86,17 @@ public class CartProductServiceImpl implements CartProductService {
 
             return cartProductDTOConverter.convert(newCartProduct);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteProductFromCart(Long cartId, Long productId) {
+        DeleteCartProductValidationResult validationResult = deleteProductFromCartValidator.validate(cartId, productId);
+        cartProductRepository.delete(validationResult.getCartProduct());
+        validationResult.getCart().getCartProducts().remove(validationResult.getCartProduct());
+        updateCartTotal(validationResult.getCart(), null);
     }
 
     private void updateCartProduct(final CartProduct cartProduct, final Integer finalQuantity) {
