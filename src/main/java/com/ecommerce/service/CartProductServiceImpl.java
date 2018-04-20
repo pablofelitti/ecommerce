@@ -94,7 +94,6 @@ public class CartProductServiceImpl implements CartProductService {
     @Override
     public void deleteProductFromCart(Long cartId, Long productId) {
         DeleteCartProductValidationResult validationResult = deleteProductFromCartValidator.validate(cartId, productId);
-        cartProductRepository.delete(validationResult.getCartProduct());
         validationResult.getCart().getCartProducts().remove(validationResult.getCartProduct());
         updateCartTotal(validationResult.getCart(), null);
     }
@@ -105,16 +104,21 @@ public class CartProductServiceImpl implements CartProductService {
     }
 
     private void updateCartTotal(final Cart cart, final BigDecimal firstTime) {
-        BigDecimal total = cart.getCartProducts().stream().
-                map(CartProduct::getTotal).
-                reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        BigDecimal total = calculateTotalCart(cart);
 
+        //TODO maybe this can be fixed
         if (firstTime != null) {
             cart.setTotal(total.add(firstTime));
         } else {
             cart.setTotal(total);
         }
         cartRepository.save(cart);
+    }
+
+    private BigDecimal calculateTotalCart(Cart cart) {
+        return cart.getCartProducts().stream().
+                    map(CartProduct::getTotal).
+                    reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
     private CartProduct createCartProduct(final Cart cart, final Product product) {
