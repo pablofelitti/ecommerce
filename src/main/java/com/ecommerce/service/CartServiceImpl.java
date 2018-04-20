@@ -1,6 +1,5 @@
 package com.ecommerce.service;
 
-import com.ecommerce.converter.CartCreationDTOConverter;
 import com.ecommerce.converter.CartDTOConverter;
 import com.ecommerce.dto.CartCreationDTO;
 import com.ecommerce.dto.CartDTO;
@@ -24,15 +23,12 @@ public class CartServiceImpl implements CartService {
     private static final Pattern emailPattern = Pattern.compile("^([_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{1,6}))?$");
 
     private CartRepository cartRepository;
-    private CartCreationDTOConverter cartCreationDTOConverter;
     private CartDTOConverter cartDTOConverter;
 
     @Autowired
     public CartServiceImpl(final CartRepository cartRepository,
-                           final CartCreationDTOConverter cartCreationDTOConverter,
                            final CartDTOConverter cartDTOConverter) {
         this.cartRepository = cartRepository;
-        this.cartCreationDTOConverter = cartCreationDTOConverter;
         this.cartDTOConverter = cartDTOConverter;
     }
 
@@ -41,19 +37,27 @@ public class CartServiceImpl implements CartService {
      */
     @Override
     public CartDTO create(final CartCreationDTO cartCreationDTO) {
-        Cart newCart = cartCreationDTOConverter.convert(cartCreationDTO);
-
         //TODO this validations should be refactored
         validateParameters(cartCreationDTO);
 
-        initializeNewCart(newCart);
+        Cart newCart = createCartEntity(cartCreationDTO);
 
         Cart savedCart = cartRepository.save(newCart);
 
         return cartDTOConverter.convert(savedCart);
     }
 
-    private void validateParameters(CartCreationDTO cartCreationDTO) {
+    private Cart createCartEntity(CartCreationDTO cartCreationDTO) {
+        Cart newCart = new Cart();
+        newCart.setFullName(cartCreationDTO.getFullName());
+        newCart.setEmail(cartCreationDTO.getEmail());
+        newCart.setTotal(new BigDecimal(0));
+        newCart.setStatus(CartStatus.NEW);
+        newCart.setCreationDate(new Date());
+        return newCart;
+    }
+
+    private void validateParameters(final CartCreationDTO cartCreationDTO) {
         if (StringUtils.isEmpty(cartCreationDTO.getFullName())) {
             throw new MalformedRequestPayloadException(ErrorCode.FULLNAME_CANNOT_BE_EMPTY);
         }
@@ -66,11 +70,5 @@ public class CartServiceImpl implements CartService {
         if (!matcher.matches()) {
             throw new MalformedRequestPayloadException(ErrorCode.EMAIL_FORMAT_INCORRECT);
         }
-    }
-
-    private void initializeNewCart(final Cart newCart) {
-        newCart.setTotal(new BigDecimal(0));
-        newCart.setStatus(CartStatus.NEW);
-        newCart.setCreationDate(new Date());
     }
 }
