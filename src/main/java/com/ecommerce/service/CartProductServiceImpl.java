@@ -10,17 +10,16 @@ import com.ecommerce.exception.ErrorCode;
 import com.ecommerce.exception.MalformedRequestPayloadException;
 import com.ecommerce.repository.CartProductRepository;
 import com.ecommerce.repository.CartRepository;
-import com.ecommerce.validator.CartProductCreationValidator;
-import com.ecommerce.validator.CartProductValidationResult;
-import com.ecommerce.validator.DeleteCartProductValidationResult;
-import com.ecommerce.validator.DeleteProductFromCartValidator;
+import com.ecommerce.validator.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class CartProductServiceImpl implements CartProductService {
@@ -32,24 +31,27 @@ public class CartProductServiceImpl implements CartProductService {
     private CartProductDTOConverter cartProductDTOConverter;
     private CartProductCreationValidator cartProductCreationValidator;
     private DeleteProductFromCartValidator deleteProductFromCartValidator;
+    private GetCartProductsValidator getCartProductsValidator;
 
     public CartProductServiceImpl(final CartProductRepository cartProductRepository,
                                   final CartRepository cartRepository,
                                   final CartProductDTOConverter cartProductDTOConverter,
                                   final CartProductCreationValidator cartProductCreationValidator,
-                                  final DeleteProductFromCartValidator deleteProductFromCartValidator) {
+                                  final DeleteProductFromCartValidator deleteProductFromCartValidator,
+                                  final GetCartProductsValidator getCartProductsValidator) {
         this.cartProductRepository = cartProductRepository;
         this.cartRepository = cartRepository;
         this.cartProductDTOConverter = cartProductDTOConverter;
         this.cartProductCreationValidator = cartProductCreationValidator;
         this.deleteProductFromCartValidator = deleteProductFromCartValidator;
+        this.getCartProductsValidator = getCartProductsValidator;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public CartProductDTO addProductToCart(Long cartId, final AddCartProductDTO addCartProductDTO) {
+    public CartProductDTO addProductToCart(final Long cartId, final AddCartProductDTO addCartProductDTO) {
         CartProductValidationResult validationResult = cartProductCreationValidator.validate(cartId, addCartProductDTO);
 
         Predicate<CartProduct> productExists = cp -> cp.getProduct().getId().equals(validationResult.getProduct().getId());
@@ -92,10 +94,21 @@ public class CartProductServiceImpl implements CartProductService {
      * {@inheritDoc}
      */
     @Override
-    public void deleteProductFromCart(Long cartId, Long productId) {
+    public void deleteProductFromCart(final Long cartId, final Long productId) {
         DeleteCartProductValidationResult validationResult = deleteProductFromCartValidator.validate(cartId, productId);
         validationResult.getCart().getCartProducts().remove(validationResult.getCartProduct());
         updateCartTotal(validationResult.getCart(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<CartProductDTO> getCartProducts(final Long cartId) {
+        GetCartProductsValidationResult cartProducts = getCartProductsValidator.validate(cartId);
+        return cartProducts.getCart().getCartProducts().stream().
+                map(cartProduct -> cartProductDTOConverter.convert(cartProduct)).
+                collect(Collectors.toList());
     }
 
     private void updateCartProduct(final CartProduct cartProduct, final Integer finalQuantity) {
@@ -106,7 +119,7 @@ public class CartProductServiceImpl implements CartProductService {
     private void updateCartTotal(final Cart cart, final BigDecimal firstTime) {
         BigDecimal total = calculateTotalCart(cart);
 
-        //TODO maybe this can be fixed
+        //TODO maybe this can be removed from the method parameter
         if (firstTime != null) {
             cart.setTotal(total.add(firstTime));
         } else {
@@ -115,7 +128,7 @@ public class CartProductServiceImpl implements CartProductService {
         cartRepository.save(cart);
     }
 
-    private BigDecimal calculateTotalCart(Cart cart) {
+    private BigDecimal calculateTotalCart(final Cart cart) {
         return cart.getCartProducts().stream().
                     map(CartProduct::getTotal).
                     reduce(BigDecimal::add).orElse(BigDecimal.ZERO);

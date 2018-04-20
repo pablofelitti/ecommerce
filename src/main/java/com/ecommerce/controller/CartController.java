@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Handles Cart API requests
  */
@@ -51,5 +53,10 @@ public class CartController {
                                             @PathVariable("productId") final Long productId) {
         cartProductService.deleteProductFromCart(cartId, productId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(path = "{cartId}/products")
+    public ResponseEntity<List<CartProductDTO>> getCartProducts(@PathVariable final Long cartId) {
+        return new ResponseEntity<>(cartProductService.getCartProducts(cartId), HttpStatus.OK);
     }
 }
