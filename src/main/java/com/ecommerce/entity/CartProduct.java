@@ -4,7 +4,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "CART_PRODUCT")
+@Table(name = "CART_PRODUCT", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"CART_ID", "PRODUCT_ID"})
+})
 public class CartProduct {
 
     @Id
@@ -15,6 +17,10 @@ public class CartProduct {
     @ManyToOne
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "CART_ID")
+    private Cart cart;
 
     @Column(name = "QUANTITY")
     private Integer quantity;
@@ -53,5 +59,13 @@ public class CartProduct {
 
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 }
