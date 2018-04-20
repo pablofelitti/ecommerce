@@ -43,4 +43,13 @@ public class CartController {
                                                            @RequestBody final AddCartProductDTO addCartProductDTO) {
         return new ResponseEntity<>(cartProductService.addProductToCart(cartId, addCartProductDTO), HttpStatus.OK);
     }
+
+    @DeleteMapping(
+            path = "{cartId}/products/{productId}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteCartProduct(@PathVariable("cartId") final Long cartId,
+                                            @PathVariable("productId") final Long productId) {
+        cartProductService.deleteProductFromCart(cartId, productId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

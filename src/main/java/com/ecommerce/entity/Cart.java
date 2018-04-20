@@ -23,7 +23,7 @@ public class Cart {
     @Column(name = "CREATION_DATE")
     private Date creationDate;
 
-    @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     private List<CartProduct> cartProducts;
 
     @Column(name = "TOTAL")

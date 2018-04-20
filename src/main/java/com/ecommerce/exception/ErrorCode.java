@@ -15,7 +15,8 @@ public enum ErrorCode {
     CART_DOES_NOT_EXIST("ecommerce_cart_006", "Cart does not exist"),
     PRODUCT_DOES_NOT_EXIST("ecommerce_cart_007", "Product does not exist"),
     CART_PRODUCT_QUANTITY_MUST_BE_POSITIVE("ecommerce_cart_008", "The product quantity in the cart must be positive"),
-    CART_STATUS_NOT_NEW("ecommerce_cart_009", "Cart status is not NEW");
+    CART_STATUS_NOT_NEW("ecommerce_cart_009", "Cart status is not NEW"),
+    PRODUCT_DOES_NOT_EXIST_IN_CART("ecommerce_cart_010", "Product does not exist in cart");
 
     private String code;
     private String message;
