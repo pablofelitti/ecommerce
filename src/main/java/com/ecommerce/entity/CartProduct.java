@@ -68,4 +68,8 @@ public class CartProduct {
     public void setCart(Cart cart) {
         this.cart = cart;
     }
+
+    public BigDecimal getTotal() {
+        return unitPrice.multiply(new BigDecimal(quantity));
+    }
 }
