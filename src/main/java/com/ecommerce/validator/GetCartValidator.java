@@ -6,13 +6,13 @@ import com.ecommerce.validator.rule.CartExistsRule;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GetCartProductsValidator {
+public class GetCartValidator {
 
     private CartRepository cartRepository;
 
     //TODO can we still make the validation approach better?
 
-    GetCartProductsValidator(final CartRepository cartRepository) {
+    GetCartValidator(final CartRepository cartRepository) {
         this.cartRepository = cartRepository;
     }
 

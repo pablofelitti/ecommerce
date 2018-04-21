@@ -29,22 +29,22 @@ public class CartProductServiceImpl implements CartProductService {
     private CartProductRepository cartProductRepository;
     private CartRepository cartRepository;
     private CartProductDTOConverter cartProductDTOConverter;
-    private CartProductCreationValidator cartProductCreationValidator;
+    private CreateCartProductValidator createCartProductValidator;
     private DeleteProductFromCartValidator deleteProductFromCartValidator;
-    private GetCartProductsValidator getCartProductsValidator;
+    private GetCartValidator getCartValidator;
 
     public CartProductServiceImpl(final CartProductRepository cartProductRepository,
                                   final CartRepository cartRepository,
                                   final CartProductDTOConverter cartProductDTOConverter,
-                                  final CartProductCreationValidator cartProductCreationValidator,
+                                  final CreateCartProductValidator createCartProductValidator,
                                   final DeleteProductFromCartValidator deleteProductFromCartValidator,
-                                  final GetCartProductsValidator getCartProductsValidator) {
+                                  final GetCartValidator getCartValidator) {
         this.cartProductRepository = cartProductRepository;
         this.cartRepository = cartRepository;
         this.cartProductDTOConverter = cartProductDTOConverter;
-        this.cartProductCreationValidator = cartProductCreationValidator;
+        this.createCartProductValidator = createCartProductValidator;
         this.deleteProductFromCartValidator = deleteProductFromCartValidator;
-        this.getCartProductsValidator = getCartProductsValidator;
+        this.getCartValidator = getCartValidator;
     }
 
     /**
@@ -52,7 +52,7 @@ public class CartProductServiceImpl implements CartProductService {
      */
     @Override
     public CartProductDTO addProductToCart(final Long cartId, final AddCartProductDTO addCartProductDTO) {
-        CartProductValidationResult validationResult = cartProductCreationValidator.validate(cartId, addCartProductDTO);
+        CreateCartProductValidationResult validationResult = createCartProductValidator.validate(cartId, addCartProductDTO);
 
         Predicate<CartProduct> productExists = cp -> cp.getProduct().getId().equals(validationResult.getProduct().getId());
 
@@ -105,7 +105,7 @@ public class CartProductServiceImpl implements CartProductService {
      */
     @Override
     public List<CartProductDTO> getCartProducts(final Long cartId) {
-        GetCartProductsValidationResult cartProducts = getCartProductsValidator.validate(cartId);
+        GetCartProductsValidationResult cartProducts = getCartValidator.validate(cartId);
         return cartProducts.getCart().getCartProducts().stream().
                 map(cartProduct -> cartProductDTOConverter.convert(cartProduct)).
                 collect(Collectors.toList());
