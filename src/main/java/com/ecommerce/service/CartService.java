@@ -20,4 +20,11 @@ public interface CartService {
      * @return Information of the cart
      */
     CartDTO getCart(final Long cartId);
+
+    /**
+     * Proceeds with the cart checkout
+     *
+     * @param cartId Id of the cart to checkout
+     */
+    void checkoutCart(final Long cartId);
 }

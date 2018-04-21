@@ -6,6 +6,7 @@ import com.ecommerce.dto.CartDTO;
 import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.CartStatus;
 import com.ecommerce.repository.CartRepository;
+import com.ecommerce.validator.CheckoutCartValidator;
 import com.ecommerce.validator.CreateCartValidator;
 import com.ecommerce.validator.GetCartProductsValidationResult;
 import com.ecommerce.validator.GetCartValidator;
@@ -22,16 +23,19 @@ public class CartServiceImpl implements CartService {
     private final CartDTOConverter cartDTOConverter;
     private final CreateCartValidator createCartValidator;
     private final GetCartValidator getCartValidator;
+    private final CheckoutCartValidator checkoutCartValidator;
 
     @Autowired
     public CartServiceImpl(final CartRepository cartRepository,
                            final CartDTOConverter cartDTOConverter,
                            final CreateCartValidator createCartValidator,
-                           final GetCartValidator getCartValidator) {
+                           final GetCartValidator getCartValidator,
+                           final CheckoutCartValidator checkoutCartValidator) {
         this.cartRepository = cartRepository;
         this.cartDTOConverter = cartDTOConverter;
         this.createCartValidator = createCartValidator;
         this.getCartValidator = getCartValidator;
+        this.checkoutCartValidator = checkoutCartValidator;
     }
 
     /**
@@ -41,27 +45,34 @@ public class CartServiceImpl implements CartService {
     public CartDTO create(final CartCreationDTO cartCreationDTO) {
         createCartValidator.validate(cartCreationDTO);
 
-        Cart newCart = createCartEntity(cartCreationDTO);
+        final Cart newCart = createCartEntity(cartCreationDTO);
 
-        Cart savedCart = cartRepository.save(newCart);
+        final Cart savedCart = cartRepository.save(newCart);
 
         return cartDTOConverter.convert(savedCart);
     }
 
     @Override
     public CartDTO getCart(final Long cartId) {
-        GetCartProductsValidationResult result = getCartValidator.validate(cartId);
+        final GetCartProductsValidationResult result = getCartValidator.validate(cartId);
         return cartDTOConverter.convert(result.getCart());
     }
 
     private Cart createCartEntity(final CartCreationDTO cartCreationDTO) {
-        Cart newCart = new Cart();
+        final Cart newCart = new Cart();
         newCart.setFullName(cartCreationDTO.getFullName());
         newCart.setEmail(cartCreationDTO.getEmail());
-        newCart.setTotal(new BigDecimal(0));
+        newCart.setTotal(BigDecimal.ZERO);
         newCart.setStatus(CartStatus.NEW);
         newCart.setCreationDate(new Date());
         return newCart;
+    }
+
+    @Override
+    public void checkoutCart(final Long cartId) {
+        GetCartProductsValidationResult validatorResult = checkoutCartValidator.validate(cartId);
+        validatorResult.getCart().setStatus(CartStatus.READY);
+        cartRepository.save(validatorResult.getCart());
     }
 
 }

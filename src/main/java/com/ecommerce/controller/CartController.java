@@ -64,4 +64,10 @@ public class CartController {
     public ResponseEntity<CartDTO> getCart(@PathVariable final Long cartId) {
         return new ResponseEntity<>(cartService.getCart(cartId), HttpStatus.OK);
     }
+
+    @PostMapping(path = "{cartId}/checkout")
+    public ResponseEntity checkoutCart(@PathVariable final Long cartId) {
+        cartService.checkoutCart(cartId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
