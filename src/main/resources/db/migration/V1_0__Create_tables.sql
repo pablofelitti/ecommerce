@@ -22,7 +22,7 @@ create table cart_product (
 create table product (
     id bigint not null,
     description varchar(255),
-    stock bigint,
+    stock bigint check (stock >= 0),
     unit_price decimal(19,2),
     primary key (id)
 );
