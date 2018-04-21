@@ -7,7 +7,7 @@ import com.ecommerce.validator.rule.EmptyStringRule;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CartCreationValidator {
+public class CreateCartValidator {
 
     //TODO can we still make the validation approach better?
 

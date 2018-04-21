@@ -3,6 +3,8 @@ package com.ecommerce.service;
 import com.ecommerce.dto.AddCartProductDTO;
 import com.ecommerce.dto.CartProductDTO;
 
+import java.util.List;
+
 public interface CartProductService {
 
     /**
@@ -14,7 +16,7 @@ public interface CartProductService {
      * @param addCartProductDTO input from the body request
      * @return created
      */
-    CartProductDTO addProductToCart(Long cartId, AddCartProductDTO addCartProductDTO);
+    CartProductDTO addProductToCart(final Long cartId, final AddCartProductDTO addCartProductDTO);
 
     /**
      * Deletes product from the cart
@@ -22,5 +24,13 @@ public interface CartProductService {
      * @param cartId    Id of the cart where to delete the product from
      * @param productId Id of the product to delete from the cart
      */
-    void deleteProductFromCart(Long cartId, Long productId);
+    void deleteProductFromCart(final Long cartId, final Long productId);
+
+    /**
+     * Returns the information of the list of products in the given cart cart
+     *
+     * @param cartId Id of the cart to get the products from
+     * @return Information of the list of products from the cart
+     */
+    List<CartProductDTO> getCartProducts(final Long cartId);
 }
