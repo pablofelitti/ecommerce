@@ -30,7 +30,7 @@ public class CartStockProcessServiceImpl implements CartStockProcessService {
 
     @Transactional
     @Override
-    public void processCart(final Cart cart) {
+    public Cart processCart(final Cart cart) {
         if (cart == null) {
             throw new MalformedRequestPayloadException(ErrorCode.CART_CANNOT_BE_EMPTY);
         }
@@ -54,14 +54,15 @@ public class CartStockProcessServiceImpl implements CartStockProcessService {
                 LOGGER.info("Removed {} items from stock of product id {}", cartProduct.getQuantity(), cartProduct.getProduct().getId());
                 productRepository.save(cartProduct.getProduct());
             });
-            //TODO update product stock but take into account an OptimisticLockingFailureException
             updateCart(cart, "Cart id {} processed successfully", CartStatus.PROCESSED);
         }
+        return cart;
     }
 
-    private void updateCart(final Cart cart, final String message, final CartStatus status) {
+    private Cart updateCart(final Cart cart, final String message, final CartStatus status) {
         LOGGER.error(message, cart.getId());
         cart.setStatus(status);
         cartRepository.save(cart);
+        return cart;
     }
 }

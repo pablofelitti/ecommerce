@@ -63,8 +63,9 @@ public class CartStockProcessServiceImplTest {
         Product product = createProduct(3);
         cart.addCartProduct(createCartProduct(1, product));
 
-        service.processCart(cart);
+        Cart cartResult = service.processCart(cart);
 
+        assertEquals(cart, cartResult);
         ArgumentCaptor<Cart> cartCaptor = ArgumentCaptor.forClass(Cart.class);
         verify(cartRepository).save(cartCaptor.capture());
         assertEquals(CartStatus.PROCESSED, cartCaptor.getValue().getStatus());
