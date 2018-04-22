@@ -19,4 +19,4 @@ cart:
   job:
     max-threads: 5
     chunk-size: 2
-    fixed-rate: 3000
+    fixed-rate: 30000
