@@ -30,4 +30,9 @@ Job configuration like the total number of threads as well as other parameters c
 
 ## TODO
 
-The cart job process uses Spring Batch. As optimistic lock has been implemented for product stock, so, whenever two or more threads try to update the same product stock, only one is able to do so. The thread that could not update the stock will throw OptimisticLockingFailureException and that thread stops processing further carts. This issue does not make stock data be corrupt, it just finishes early the thread that throws that exception. Next time the job runs will resume processing remaing carts. I would need more time to understand how Spring Batch works in order to fix this issue. 
+The cart job process uses Spring Batch. As optimistic lock has been implemented for product stock, so, whenever 
+two or more threads try to update the same product stock, only one is able to do so. The thread that could not 
+update the stock will throw OptimisticLockingFailureException which is correct, but the problem I am facing is 
+that the thread stops processing further carts. This issue does not make stock data be corrupt, it just finishes 
+early the thread that throws that exception. Next time the job runs will resume processing remaining carts. I 
+would need more time to understand how Spring Batch works in order to fix this issue. 
