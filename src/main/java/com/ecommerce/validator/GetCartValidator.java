@@ -8,17 +8,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class GetCartValidator {
 
-    private CartRepository cartRepository;
-
-    //TODO can we still make the validation approach better?
+    private final CartRepository cartRepository;
 
     GetCartValidator(final CartRepository cartRepository) {
         this.cartRepository = cartRepository;
     }
 
-    public GetCartProductsValidationResult validate(final Long cartId) {
-        Cart cart = new CartExistsRule(cartRepository).validate(cartId);
+    public CartValidationResult validate(final Long cartId) {
+        final Cart cart = new CartExistsRule(cartRepository).validate(cartId);
 
-        return new GetCartProductsValidationResult(cart);
+        return new CartValidationResult(cart);
     }
 }

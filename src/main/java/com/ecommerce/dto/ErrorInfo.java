@@ -2,8 +2,8 @@ package com.ecommerce.dto;
 
 public class ErrorInfo {
 
-    private String code;
-    private String message;
+    private final String code;
+    private final String message;
 
     public ErrorInfo(final String code, final String message) {
         this.code = code;

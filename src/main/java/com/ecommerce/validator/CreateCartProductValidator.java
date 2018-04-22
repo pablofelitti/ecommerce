@@ -16,22 +16,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateCartProductValidator {
 
-    private CartRepository cartRepository;
-    private ProductRepository productRepository;
+    private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
 
     CreateCartProductValidator(final CartRepository cartRepository, final ProductRepository productRepository) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
     }
 
-    //TODO can we still make the validation approach better?
-
-    public CreateCartProductValidationResult validate(Long cartId, AddCartProductDTO addCartProductDTO) {
+    public CreateCartProductValidationResult validate(final Long cartId, final AddCartProductDTO addCartProductDTO) {
 
         new NullRule(ErrorCode.PRODUCT_QUANTITY_CANNOT_BE_EMPTY).validate(addCartProductDTO.getQuantity());
 
-        Product product = new ProductExistsRule(productRepository).validate(addCartProductDTO.getProductId());
-        Cart cart = new CartExistsRule(cartRepository).validate(cartId);
+        final Product product = new ProductExistsRule(productRepository).validate(addCartProductDTO.getProductId());
+        final Cart cart = new CartExistsRule(cartRepository).validate(cartId);
         new CartStatusRule(CartStatus.NEW, ErrorCode.CART_STATUS_NOT_NEW).validate(cart);
 
         return new CreateCartProductValidationResult(cart, product);

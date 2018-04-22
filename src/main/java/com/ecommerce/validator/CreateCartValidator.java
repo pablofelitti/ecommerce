@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateCartValidator {
 
-    //TODO can we still make the validation approach better?
-
     public void validate(final CartCreationDTO cartCreationDTO) {
         new EmptyStringRule(ErrorCode.FULLNAME_CANNOT_BE_EMPTY).validate(cartCreationDTO.getFullName());
         new EmailRule().validate(cartCreationDTO.getEmail());

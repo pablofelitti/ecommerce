@@ -5,13 +5,13 @@ import java.util.List;
 
 public class CartDTO {
 
-    private Long id;
-    private String fullName;
-    private String email;
-    private String creationDate;
-    private List<CartProductDTO> cartProducts;
-    private BigDecimal total;
-    private String status;
+    private final Long id;
+    private final String fullName;
+    private final String email;
+    private final String creationDate;
+    private final List<CartProductDTO> cartProducts;
+    private final BigDecimal total;
+    private final String status;
 
     public CartDTO(final Long id, final String fullName, final String email, final String creationDate,
                    final List<CartProductDTO> cartProducts, final BigDecimal total, final String status) {

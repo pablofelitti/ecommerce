@@ -2,7 +2,7 @@ package com.ecommerce.dto;
 
 public class ErrorDetails {
 
-    private ErrorInfo error;
+    private final ErrorInfo error;
 
     public ErrorDetails(final ErrorInfo error) {
         this.error = error;

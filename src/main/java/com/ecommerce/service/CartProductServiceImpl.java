@@ -105,7 +105,7 @@ public class CartProductServiceImpl implements CartProductService {
      */
     @Override
     public List<CartProductDTO> getCartProducts(final Long cartId) {
-        GetCartProductsValidationResult cartProducts = getCartValidator.validate(cartId);
+        CartValidationResult cartProducts = getCartValidator.validate(cartId);
         return cartProducts.getCart().getCartProducts().stream().
                 map(cartProduct -> cartProductDTOConverter.convert(cartProduct)).
                 collect(Collectors.toList());

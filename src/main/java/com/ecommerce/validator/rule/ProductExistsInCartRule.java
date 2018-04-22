@@ -9,6 +9,9 @@ import com.ecommerce.exception.ResourceDoesNotExistException;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+/**
+ * Rule that validates if the given product id exists in the cart. If present, the cart product is returned
+ */
 public class ProductExistsInCartRule implements ValidatorResponseRule<Long, CartProduct> {
 
     private final Cart cart;
@@ -18,15 +21,15 @@ public class ProductExistsInCartRule implements ValidatorResponseRule<Long, Cart
     }
 
     @Override
-    public CartProduct validate(Long id) {
+    public CartProduct validate(final Long productId) {
 
-        if (id == null) {
+        if (productId == null) {
             throw new MalformedRequestPayloadException(ErrorCode.PRODUCT_CANNOT_BE_EMPTY);
         }
 
-        Predicate<CartProduct> cartProductExists = cartProduct -> id.equals(cartProduct.getProduct().getId());
+        final Predicate<CartProduct> cartProductExists = cartProduct -> productId.equals(cartProduct.getProduct().getId());
 
-        Optional<CartProduct> cartProduct = cart.getCartProducts().stream().
+        final Optional<CartProduct> cartProduct = cart.getCartProducts().stream().
                 filter(cartProductExists).
                 findFirst();
 

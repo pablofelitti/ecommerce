@@ -6,6 +6,9 @@ import com.ecommerce.exception.ErrorCode;
 import com.ecommerce.exception.MalformedRequestPayloadException;
 import com.ecommerce.exception.ResourceDoesNotExistException;
 
+/**
+ * Rule that validates if the given cart has the expected status
+ */
 public class CartStatusRule implements ValidatorRule<Cart> {
 
     private final CartStatus cartStatus;
@@ -17,7 +20,7 @@ public class CartStatusRule implements ValidatorRule<Cart> {
     }
 
     @Override
-    public void validate(Cart cart) {
+    public void validate(final Cart cart) {
         if (!cartStatus.equals(cart.getStatus())) {
             throw new MalformedRequestPayloadException(errorCode);
         }

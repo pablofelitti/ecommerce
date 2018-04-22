@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 @Component
 public class CartDTOConverter implements Converter<Cart, CartDTO> {
 
-    private CartProductDTOConverter cartProductDTOConverter;
-    private DateUtils dateUtils;
+    private final CartProductDTOConverter cartProductDTOConverter;
+    private final DateUtils dateUtils;
 
     public CartDTOConverter(final CartProductDTOConverter cartProductDTOConverter,
                             final DateUtils dateUtils) {
@@ -25,8 +25,7 @@ public class CartDTOConverter implements Converter<Cart, CartDTO> {
     @Override
     public CartDTO convert(final Cart cart) {
 
-        String convertedCreationDate = dateUtils.convertToISOFormat(cart.getCreationDate());
-
+        final String convertedCreationDate = dateUtils.convertToISOFormat(cart.getCreationDate());
         List<CartProductDTO> carts = null;
 
         //TODO is there something in stream api for these cases?

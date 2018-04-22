@@ -14,17 +14,15 @@ public class CheckoutCartValidator {
 
     private CartRepository cartRepository;
 
-    //TODO can we still make the validation approach better?
-
     CheckoutCartValidator(final CartRepository cartRepository) {
         this.cartRepository = cartRepository;
     }
 
-    public GetCartProductsValidationResult validate(final Long cartId) {
-        Cart cart = new CartExistsRule(cartRepository).validate(cartId);
+    public CartValidationResult validate(final Long cartId) {
+        final Cart cart = new CartExistsRule(cartRepository).validate(cartId);
         new CartStatusRule(CartStatus.NEW, ErrorCode.CART_STATUS_NOT_NEW).validate(cart);
-        new AnyProductExistsInCartRule(cart).validate();
+        new AnyProductExistsInCartRule().validate(cart);
 
-        return new GetCartProductsValidationResult(cart);
+        return new CartValidationResult(cart);
     }
 }

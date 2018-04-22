@@ -2,8 +2,8 @@ package com.ecommerce.dto;
 
 public class CartCreationDTO {
 
-    private String fullName;
-    private String email;
+    private final String fullName;
+    private final String email;
 
     public CartCreationDTO(final String fullName, final String email) {
         this.fullName = fullName;

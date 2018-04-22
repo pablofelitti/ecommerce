@@ -1,8 +1,11 @@
 package com.ecommerce.exception;
 
+/**
+ * Exception that indicates parameters received are not correct
+ */
 public class MalformedRequestPayloadException extends RuntimeException {
 
-    private ErrorCode errorCode;
+    private final ErrorCode errorCode;
 
     public MalformedRequestPayloadException(final ErrorCode errorCode) {
         super(errorCode.getMessage());

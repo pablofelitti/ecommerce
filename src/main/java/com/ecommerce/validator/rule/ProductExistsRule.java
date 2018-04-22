@@ -8,6 +8,9 @@ import com.ecommerce.repository.ProductRepository;
 
 import java.util.Optional;
 
+/**
+ * Rule that validates if the given product id exists in the system
+ */
 public class ProductExistsRule implements ValidatorResponseRule<Long, Product> {
 
     private final ProductRepository productRepository;
@@ -17,13 +20,13 @@ public class ProductExistsRule implements ValidatorResponseRule<Long, Product> {
     }
 
     @Override
-    public Product validate(Long id) {
+    public Product validate(final Long id) {
 
         if (id == null) {
             throw new MalformedRequestPayloadException(ErrorCode.PRODUCT_CANNOT_BE_EMPTY);
         }
 
-        Optional<Product> product = productRepository.findById(id);
+        final Optional<Product> product = productRepository.findById(id);
         if (!product.isPresent()) {
             throw new ResourceDoesNotExistException(ErrorCode.PRODUCT_DOES_NOT_EXIST);
         }

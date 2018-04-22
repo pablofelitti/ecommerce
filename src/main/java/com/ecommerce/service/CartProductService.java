@@ -14,7 +14,7 @@ public interface CartProductService {
      *
      * @param cartId            Id of the cart where to create product
      * @param addCartProductDTO input from the body request
-     * @return created
+     * @return Added cart product
      */
     CartProductDTO addProductToCart(final Long cartId, final AddCartProductDTO addCartProductDTO);
 
