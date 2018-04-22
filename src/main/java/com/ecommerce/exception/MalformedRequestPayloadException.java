@@ -5,7 +5,7 @@ public class MalformedRequestPayloadException extends RuntimeException {
     private ErrorCode errorCode;
 
     public MalformedRequestPayloadException(final ErrorCode errorCode) {
-        super();
+        super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 

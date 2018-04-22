@@ -5,7 +5,7 @@ public class ResourceDoesNotExistException extends RuntimeException {
     private ErrorCode errorCode;
 
     public ResourceDoesNotExistException(final ErrorCode errorCode) {
-        super();
+        super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 

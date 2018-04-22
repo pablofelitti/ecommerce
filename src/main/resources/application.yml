@@ -1,4 +1,7 @@
 spring:
+  batch:
+    job:
+      enabled: false
   h2:
     console: true
   flyway:
@@ -11,3 +14,9 @@ spring:
     url: jdbc:h2:mem:ecommerce-test
     username: sa
     password:
+
+cart:
+  job:
+    max-threads: 5
+    chunk-size: 2
+    fixed-rate: 3000

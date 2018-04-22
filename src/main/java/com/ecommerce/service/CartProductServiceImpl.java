@@ -96,7 +96,7 @@ public class CartProductServiceImpl implements CartProductService {
     @Override
     public void deleteProductFromCart(final Long cartId, final Long productId) {
         DeleteCartProductValidationResult validationResult = deleteProductFromCartValidator.validate(cartId, productId);
-        validationResult.getCart().getCartProducts().remove(validationResult.getCartProduct());
+        validationResult.getCart().removeCartProduct(validationResult.getCartProduct());
         updateCartTotal(validationResult.getCart(), null);
     }
 

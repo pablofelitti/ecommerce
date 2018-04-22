@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ResourceDoesNotExistException.class)
     public final ResponseEntity<ErrorDetails> handleResourceDoesNotExistException(final ResourceDoesNotExistException ex, final WebRequest request) {
-        LOGGER.error("An error has occured", ex);
+        LOGGER.error("An error has occurred", ex);
         ErrorDetails errorDetails = new ErrorDetails(new ErrorInfo(ex.getErrorCode().getCode(), ex.getErrorCode().getMessage()));
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MalformedRequestPayloadException.class)
     public final ResponseEntity<ErrorDetails> handleInvalidRequestException(final MalformedRequestPayloadException ex, final WebRequest request) {
-        LOGGER.error("An error has occured", ex);
+        LOGGER.error("An error has occurred", ex);
         ErrorDetails errorDetails = new ErrorDetails(new ErrorInfo(ex.getErrorCode().getCode(), ex.getErrorCode().getMessage()));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public final ResponseEntity<ErrorDetails> handleIncorrectJsonException(final HttpMessageNotReadableException ex, final WebRequest request) {
-        LOGGER.error("An error has occured", ex);
+        LOGGER.error("An error has occurred", ex);
         ErrorDetails errorDetails = new ErrorDetails(new ErrorInfo(ErrorCode.MALFORMED_JSON.getCode(), ErrorCode.MALFORMED_JSON.getMessage()));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ErrorDetails> handleDefaultException(final Exception ex, final WebRequest request) {
-        LOGGER.error("An error has occured", ex);
+        LOGGER.error("An error has occurred", ex);
         ErrorDetails errorDetails = new ErrorDetails(new ErrorInfo(ErrorCode.DEFAULT.getCode(), ErrorCode.DEFAULT.getMessage()));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
