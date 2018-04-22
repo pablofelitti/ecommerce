@@ -52,6 +52,9 @@ public class CartServiceImpl implements CartService {
         return cartDTOConverter.convert(savedCart);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CartDTO getCart(final Long cartId) {
         final CartValidationResult result = getCartValidator.validate(cartId);
@@ -68,9 +71,12 @@ public class CartServiceImpl implements CartService {
         return newCart;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void checkoutCart(final Long cartId) {
-        CartValidationResult validatorResult = checkoutCartValidator.validate(cartId);
+        final CartValidationResult validatorResult = checkoutCartValidator.validate(cartId);
         validatorResult.getCart().setStatus(CartStatus.READY);
         cartRepository.save(validatorResult.getCart());
     }

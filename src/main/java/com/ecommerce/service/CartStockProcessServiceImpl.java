@@ -28,6 +28,9 @@ public class CartStockProcessServiceImpl implements CartStockProcessService {
         this.cartRepository = cartRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     @Override
     public Cart processCart(final Cart cart) {
@@ -41,12 +44,12 @@ public class CartStockProcessServiceImpl implements CartStockProcessService {
 
         LOGGER.info("Processing cart id {}", cart.getId());
 
-        Predicate<CartProduct> negativeStock = cartProduct ->
+        final Predicate<CartProduct> hasNegativeStock = cartProduct ->
                 cartProduct.getProduct().getStock() - cartProduct.getQuantity() < 0;
 
-        boolean cartHasAnyNegativeStock = cart.getCartProducts().stream().anyMatch(negativeStock);
+        boolean cartHasNegativeStock = cart.getCartProducts().stream().anyMatch(hasNegativeStock);
 
-        if (cartHasAnyNegativeStock) {
+        if (cartHasNegativeStock) {
             updateCart(cart, "Not enough stock to process cart id {}", CartStatus.FAILED);
         } else {
             cart.getCartProducts().forEach(cartProduct -> {
