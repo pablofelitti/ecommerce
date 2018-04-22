@@ -75,7 +75,7 @@ public class JobConfiguration {
     @Bean
     public Step step() {
         return stepBuilderFactory.get("step")
-                .<Cart, Cart>chunk(chunkSize)
+                .<Long, Cart>chunk(chunkSize)
                 .reader(attemptReader)
                 .processor(attemptProcessor)
                 .taskExecutor(taskExecutor())

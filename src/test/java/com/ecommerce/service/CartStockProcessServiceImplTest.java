@@ -6,6 +6,7 @@ import com.ecommerce.entity.CartStatus;
 import com.ecommerce.entity.Product;
 import com.ecommerce.exception.ErrorCode;
 import com.ecommerce.exception.MalformedRequestPayloadException;
+import com.ecommerce.exception.ResourceDoesNotExistException;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.ProductRepository;
 import org.junit.Test;
@@ -14,6 +15,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -58,20 +61,34 @@ public class CartStockProcessServiceImplTest {
     }
 
     @Test
+    public void whenCartIsNotFoundThenThrowException() {
+        when(cartRepository.findById(55L)).thenReturn(Optional.empty());
+
+        try {
+            service.processCart(55L);
+            fail("Should not have accepted to process cart");
+        } catch (ResourceDoesNotExistException e) {
+            assertEquals(ErrorCode.CART_DOES_NOT_EXIST, e.getErrorCode());
+        }
+    }
+
+    @Test
     public void whenCartHasOneProductAndRemainingStockIsPositiveThenCartIsProcessed() {
-        Cart cart = createCart(CartStatus.READY);
         Product product = createProduct(3);
+        Cart cart = createCart(CartStatus.READY);
         cart.addCartProduct(createCartProduct(1, product));
+        when(cartRepository.findById(55L)).thenReturn(Optional.of(cart));
 
-        Cart cartResult = service.processCart(cart);
+        Cart cartResult = service.processCart(55L);
 
-        assertEquals(cart, cartResult);
+        verify(cartRepository).findById(55L);
         ArgumentCaptor<Cart> cartCaptor = ArgumentCaptor.forClass(Cart.class);
         verify(cartRepository).save(cartCaptor.capture());
         assertEquals(CartStatus.PROCESSED, cartCaptor.getValue().getStatus());
         ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository).save(productCaptor.capture());
         assertEquals(new Integer(2), productCaptor.getValue().getStock());
+        assertEquals(cart, cartResult);
     }
 
     @Test
@@ -81,8 +98,9 @@ public class CartStockProcessServiceImplTest {
         cart.addCartProduct(createCartProduct(1, product1));
         Product product2 = createProduct(5);
         cart.addCartProduct(createCartProduct(2, product2));
+        when(cartRepository.findById(55L)).thenReturn(Optional.of(cart));
 
-        service.processCart(cart);
+        service.processCart(55L);
 
         ArgumentCaptor<Cart> cartCaptor = ArgumentCaptor.forClass(Cart.class);
         verify(cartRepository).save(cartCaptor.capture());
@@ -98,8 +116,9 @@ public class CartStockProcessServiceImplTest {
         Cart cart = createCart(CartStatus.READY);
         Product product = createProduct(3);
         cart.addCartProduct(createCartProduct(4, product));
+        when(cartRepository.findById(55L)).thenReturn(Optional.of(cart));
 
-        service.processCart(cart);
+        service.processCart(55L);
 
         ArgumentCaptor<Cart> argumentCaptor = ArgumentCaptor.forClass(Cart.class);
         verify(cartRepository).save(argumentCaptor.capture());
@@ -109,9 +128,10 @@ public class CartStockProcessServiceImplTest {
 
     private void testCartStatusFailedValidation(CartStatus cartStatus) {
         Cart cart = createCart(cartStatus);
+        when(cartRepository.findById(55L)).thenReturn(Optional.of(cart));
 
         try {
-            service.processCart(cart);
+            service.processCart(55L);
             fail("Should not have accepted to process cart");
         } catch (MalformedRequestPayloadException e) {
             assertEquals(ErrorCode.CART_STATUS_NOT_READY, e.getErrorCode());
