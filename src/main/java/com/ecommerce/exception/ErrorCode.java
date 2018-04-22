@@ -21,8 +21,8 @@ public enum ErrorCode {
     CART_CANNOT_BE_EMPTY("ecommerce_cart_012", "Cart cannot be empty"),
     CART_STATUS_NOT_READY("ecommerce_cart_013", "Cart status is not READY");
 
-    private String code;
-    private String message;
+    private final String code;
+    private final String message;
 
     ErrorCode(final String code, final String message) {
         this.code = code;

@@ -26,12 +26,12 @@ public class CartProductServiceImpl implements CartProductService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CartProductServiceImpl.class);
 
-    private CartProductRepository cartProductRepository;
-    private CartRepository cartRepository;
-    private CartProductDTOConverter cartProductDTOConverter;
-    private CreateCartProductValidator createCartProductValidator;
-    private DeleteProductFromCartValidator deleteProductFromCartValidator;
-    private GetCartValidator getCartValidator;
+    private final CartProductRepository cartProductRepository;
+    private final CartRepository cartRepository;
+    private final CartProductDTOConverter cartProductDTOConverter;
+    private final CreateCartProductValidator createCartProductValidator;
+    private final DeleteProductFromCartValidator deleteProductFromCartValidator;
+    private final GetCartValidator getCartValidator;
 
     public CartProductServiceImpl(final CartProductRepository cartProductRepository,
                                   final CartRepository cartRepository,
@@ -52,27 +52,29 @@ public class CartProductServiceImpl implements CartProductService {
      */
     @Override
     public CartProductDTO addProductToCart(final Long cartId, final AddCartProductDTO addCartProductDTO) {
-        CreateCartProductValidationResult validationResult = createCartProductValidator.validate(cartId, addCartProductDTO);
+        final CreateCartProductValidationResult validationResult = createCartProductValidator.validate(cartId, addCartProductDTO);
 
-        Predicate<CartProduct> productExists = cp -> cp.getProduct().getId().equals(validationResult.getProduct().getId());
+        final Product product = validationResult.getProduct();
+        final Cart cart = validationResult.getCart();
 
-        Optional<CartProduct> cartProductExisting = validationResult.getCart().getCartProducts().stream().
-                filter(productExists).
-                findFirst();
+        final Predicate<CartProduct> productExistsInCart = cartProduct ->
+                cartProduct.getProduct().getId().equals(product.getId());
+
+        final Optional<CartProduct> cartProductExisting = cart.getCartProducts().stream()
+                .filter(productExistsInCart)
+                .findFirst();
 
         if (cartProductExisting.isPresent()) {
 
             LOGGER.debug("Product {} is present in the cart", addCartProductDTO.getProductId());
 
-            Integer finalQuantity = cartProductExisting.get().getQuantity() + addCartProductDTO.getQuantity();
+            final Integer finalQuantity = cartProductExisting.get().getQuantity() + addCartProductDTO.getQuantity();
 
             LOGGER.debug("New quantity will be {}", finalQuantity);
 
             if (finalQuantity > 0) {
-
                 updateCartProduct(cartProductExisting.get(), finalQuantity);
-                updateCartTotal(validationResult.getCart(), null);
-
+                updateCartTotal(cart);
                 return cartProductDTOConverter.convert(cartProductExisting.get());
             } else {
                 throw new MalformedRequestPayloadException(ErrorCode.CART_PRODUCT_QUANTITY_MUST_BE_POSITIVE);
@@ -81,10 +83,11 @@ public class CartProductServiceImpl implements CartProductService {
 
             LOGGER.debug("Product {} is not present in the cart", addCartProductDTO.getProductId());
 
-            CartProduct newCartProduct = createCartProduct(validationResult.getCart(), validationResult.getProduct());
+            final CartProduct newCartProduct = createCartProduct(cart, product);
 
             updateCartProduct(newCartProduct, addCartProductDTO.getQuantity());
-            updateCartTotal(validationResult.getCart(), newCartProduct.getTotal());
+            cart.addCartProduct(newCartProduct);
+            updateCartTotal(cart);
 
             return cartProductDTOConverter.convert(newCartProduct);
         }
@@ -97,7 +100,7 @@ public class CartProductServiceImpl implements CartProductService {
     public void deleteProductFromCart(final Long cartId, final Long productId) {
         DeleteCartProductValidationResult validationResult = deleteProductFromCartValidator.validate(cartId, productId);
         validationResult.getCart().removeCartProduct(validationResult.getCartProduct());
-        updateCartTotal(validationResult.getCart(), null);
+        updateCartTotal(validationResult.getCart());
     }
 
     /**
@@ -105,9 +108,9 @@ public class CartProductServiceImpl implements CartProductService {
      */
     @Override
     public List<CartProductDTO> getCartProducts(final Long cartId) {
-        GetCartProductsValidationResult cartProducts = getCartValidator.validate(cartId);
+        CartValidationResult cartProducts = getCartValidator.validate(cartId);
         return cartProducts.getCart().getCartProducts().stream().
-                map(cartProduct -> cartProductDTOConverter.convert(cartProduct)).
+                map(cartProductDTOConverter::convert).
                 collect(Collectors.toList());
     }
 
@@ -116,26 +119,20 @@ public class CartProductServiceImpl implements CartProductService {
         cartProductRepository.save(cartProduct);
     }
 
-    private void updateCartTotal(final Cart cart, final BigDecimal firstTime) {
-        BigDecimal total = calculateTotalCart(cart);
-
-        //TODO maybe this can be removed from the method parameter
-        if (firstTime != null) {
-            cart.setTotal(total.add(firstTime));
-        } else {
-            cart.setTotal(total);
-        }
+    private void updateCartTotal(final Cart cart) {
+        final BigDecimal total = calculateTotalCart(cart);
+        cart.setTotal(total);
         cartRepository.save(cart);
     }
 
     private BigDecimal calculateTotalCart(final Cart cart) {
         return cart.getCartProducts().stream().
-                    map(CartProduct::getTotal).
-                    reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                map(CartProduct::getTotal).
+                reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
     private CartProduct createCartProduct(final Cart cart, final Product product) {
-        CartProduct newCartProduct = new CartProduct();
+        final CartProduct newCartProduct = new CartProduct();
         newCartProduct.setProduct(product);
         newCartProduct.setUnitPrice(product.getUnitPrice());
         newCartProduct.setCart(cart);

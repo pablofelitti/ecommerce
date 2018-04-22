@@ -8,7 +8,7 @@ import com.ecommerce.entity.CartStatus;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.validator.CheckoutCartValidator;
 import com.ecommerce.validator.CreateCartValidator;
-import com.ecommerce.validator.GetCartProductsValidationResult;
+import com.ecommerce.validator.CartValidationResult;
 import com.ecommerce.validator.GetCartValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,9 +52,12 @@ public class CartServiceImpl implements CartService {
         return cartDTOConverter.convert(savedCart);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CartDTO getCart(final Long cartId) {
-        final GetCartProductsValidationResult result = getCartValidator.validate(cartId);
+        final CartValidationResult result = getCartValidator.validate(cartId);
         return cartDTOConverter.convert(result.getCart());
     }
 
@@ -68,9 +71,12 @@ public class CartServiceImpl implements CartService {
         return newCart;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void checkoutCart(final Long cartId) {
-        GetCartProductsValidationResult validatorResult = checkoutCartValidator.validate(cartId);
+        final CartValidationResult validatorResult = checkoutCartValidator.validate(cartId);
         validatorResult.getCart().setStatus(CartStatus.READY);
         cartRepository.save(validatorResult.getCart());
     }

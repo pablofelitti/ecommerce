@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AttemptProcessor implements ItemProcessor<Cart, Cart> {
 
-    private CartStockProcessService cartStockProcessService;
+    private final CartStockProcessService cartStockProcessService;
 
     AttemptProcessor(final CartStockProcessService cartStockProcessService) {
         this.cartStockProcessService = cartStockProcessService;

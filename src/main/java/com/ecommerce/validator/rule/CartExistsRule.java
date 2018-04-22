@@ -7,17 +7,20 @@ import com.ecommerce.repository.CartRepository;
 
 import java.util.Optional;
 
+/**
+ * Rule that validates if a given cart id exists, and returns it if present
+ */
 public class CartExistsRule implements ValidatorResponseRule<Long, Cart> {
 
     private final CartRepository cartRepository;
 
-    public CartExistsRule(CartRepository cartRepository) {
+    public CartExistsRule(final CartRepository cartRepository) {
         this.cartRepository = cartRepository;
     }
 
     @Override
-    public Cart validate(Long id) {
-        Optional<Cart> cart = cartRepository.findById(id);
+    public Cart validate(final Long id) {
+        final Optional<Cart> cart = cartRepository.findById(id);
         if (!cart.isPresent()) {
             throw new ResourceDoesNotExistException(ErrorCode.CART_DOES_NOT_EXIST);
         }

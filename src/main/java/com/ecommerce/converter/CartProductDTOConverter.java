@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CartProductDTOConverter implements Converter<CartProduct, CartProductDTO> {
 
-    private ProductDTOConverter productDTOConverter;
+    private final ProductDTOConverter productDTOConverter;
 
     CartProductDTOConverter(final ProductDTOConverter productDTOConverter) {
         this.productDTOConverter = productDTOConverter;
@@ -17,7 +17,7 @@ public class CartProductDTOConverter implements Converter<CartProduct, CartProdu
 
     @Override
     public CartProductDTO convert(final CartProduct cartProduct) {
-        ProductDTO productDTO = productDTOConverter.convert(cartProduct.getProduct());
+        final ProductDTO productDTO = productDTOConverter.convert(cartProduct.getProduct());
 
         return new CartProductDTO(cartProduct.getId(),
                 productDTO, cartProduct.getQuantity(), cartProduct.getUnitPrice());

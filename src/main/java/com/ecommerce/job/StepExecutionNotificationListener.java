@@ -6,6 +6,9 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.listener.StepExecutionListenerSupport;
 
+/**
+ * Listener for the job step completion
+ */
 public class StepExecutionNotificationListener extends StepExecutionListenerSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StepExecutionNotificationListener.class);

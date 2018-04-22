@@ -7,18 +7,15 @@ import com.ecommerce.exception.ResourceDoesNotExistException;
 
 import java.util.Optional;
 
-public class AnyProductExistsInCartRule implements ValidatorResponseSimpleRule {
-
-    private final Cart cart;
-
-    public AnyProductExistsInCartRule(final Cart cart) {
-        this.cart = cart;
-    }
+/**
+ * Rule that validates if any product exists in the cart
+ */
+public class AnyProductExistsInCartRule implements ValidatorRule<Cart> {
 
     @Override
-    public void validate() {
+    public void validate(final Cart cart) {
 
-        Optional<CartProduct> cartProduct = cart.getCartProducts().stream().findAny();
+        final Optional<CartProduct> cartProduct = cart.getCartProducts().stream().findAny();
 
         if (!cartProduct.isPresent()) {
             throw new ResourceDoesNotExistException(ErrorCode.NO_PRODUCT_EXISTS_IN_CART);

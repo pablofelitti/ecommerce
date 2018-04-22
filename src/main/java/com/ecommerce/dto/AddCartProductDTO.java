@@ -2,10 +2,10 @@ package com.ecommerce.dto;
 
 public class AddCartProductDTO {
 
-    private Long productId;
-    private Integer quantity;
+    private final Long productId;
+    private final Integer quantity;
 
-    public AddCartProductDTO(Long productId, Integer quantity) {
+    public AddCartProductDTO(final Long productId, final Integer quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }

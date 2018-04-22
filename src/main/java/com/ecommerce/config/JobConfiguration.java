@@ -14,13 +14,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
+/**
+ * Configuration of the cart processing job
+ */
 @Configuration
 public class JobConfiguration {
 
-    private JobBuilderFactory jobBuilderFactory;
-    private StepBuilderFactory stepBuilderFactory;
-    private AttemptReader attemptReader;
-    private AttemptProcessor attemptProcessor;
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
+    private final AttemptReader attemptReader;
+    private final AttemptProcessor attemptProcessor;
 
     @Value("${cart.job.max-threads}")
     private int maxThreads;
@@ -41,7 +44,7 @@ public class JobConfiguration {
 
     @Bean
     public TaskExecutor taskExecutor() {
-        SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
+        final SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
         taskExecutor.setConcurrencyLimit(maxThreads);
         return taskExecutor;
     }
