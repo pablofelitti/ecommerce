@@ -2,6 +2,7 @@ package com.ecommerce.entity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -88,5 +89,18 @@ public class Cart {
 
     public void setCartProducts(List<CartProduct> cartProducts) {
         this.cartProducts = cartProducts;
+    }
+
+    public void addCartProduct(final CartProduct cartProduct) {
+        if (cartProducts == null) {
+            cartProducts = new ArrayList<>();
+        }
+        cartProducts.add(cartProduct);
+    }
+
+    public void removeCartProduct(final CartProduct cartProduct) {
+        if (cartProducts != null) {
+            cartProducts.remove(cartProduct);
+        }
     }
 }

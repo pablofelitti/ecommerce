@@ -20,7 +20,11 @@ public class Product implements Serializable {
     private BigDecimal unitPrice;
 
     @Column(name = "STOCK")
-    private Long stock;
+    private Integer stock;
+
+    @Version
+    @Column(name = "VERSION")
+    private Long version;
 
 
     public Long getId() {
@@ -47,11 +51,23 @@ public class Product implements Serializable {
         this.unitPrice = unitPrice;
     }
 
-    public Long getStock() {
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(Long stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public void removeFromStock(final Integer stockToRemove) {
+        this.stock = this.stock - stockToRemove;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

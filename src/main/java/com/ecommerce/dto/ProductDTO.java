@@ -7,9 +7,9 @@ public class ProductDTO {
     private Long id;
     private String description;
     private BigDecimal unitPrice;
-    private Long stock;
+    private Integer stock;
 
-    public ProductDTO(final Long id, final String description, final BigDecimal unitPrice, final Long stock) {
+    public ProductDTO(final Long id, final String description, final BigDecimal unitPrice, final Integer stock) {
         this.id = id;
         this.description = description;
         this.unitPrice = unitPrice;
@@ -28,7 +28,7 @@ public class ProductDTO {
         return unitPrice;
     }
 
-    public Long getStock() {
+    public Integer getStock() {
         return stock;
     }
 }
