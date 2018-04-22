@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * Invokes the service to process the stock removal for a given cart
  */
 @Component
-public class AttemptProcessor implements ItemProcessor<Cart, Cart> {
+public class AttemptProcessor implements ItemProcessor<Long, Cart> {
 
     private final CartStockProcessService cartStockProcessService;
 
@@ -18,7 +18,7 @@ public class AttemptProcessor implements ItemProcessor<Cart, Cart> {
     }
 
     @Override
-    public Cart process(Cart cart) {
-        return cartStockProcessService.processCart(cart);
+    public Cart process(final Long cartId) {
+        return cartStockProcessService.processCart(cartId);
     }
 }

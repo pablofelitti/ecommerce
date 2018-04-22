@@ -5,6 +5,7 @@ import com.ecommerce.entity.CartProduct;
 import com.ecommerce.entity.CartStatus;
 import com.ecommerce.exception.ErrorCode;
 import com.ecommerce.exception.MalformedRequestPayloadException;
+import com.ecommerce.exception.ResourceDoesNotExistException;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 @Service
@@ -33,37 +35,44 @@ public class CartStockProcessServiceImpl implements CartStockProcessService {
      */
     @Transactional
     @Override
-    public Cart processCart(final Cart cart) {
-        if (cart == null) {
+    public Cart processCart(final Long cartId) {
+
+        if (cartId == null) {
             throw new MalformedRequestPayloadException(ErrorCode.CART_CANNOT_BE_EMPTY);
         }
 
-        if (!CartStatus.READY.equals(cart.getStatus())) {
+        final Optional<Cart> cart = cartRepository.findById(cartId);
+
+        if (!cart.isPresent()) {
+            throw new ResourceDoesNotExistException(ErrorCode.CART_DOES_NOT_EXIST);
+        }
+
+        if (!CartStatus.READY.equals(cart.get().getStatus())) {
             throw new MalformedRequestPayloadException(ErrorCode.CART_STATUS_NOT_READY);
         }
 
-        LOGGER.info("Processing cart id {}", cart.getId());
+        LOGGER.info("Processing cart id {}", cart.get().getId());
 
         final Predicate<CartProduct> hasNegativeStock = cartProduct ->
                 cartProduct.getProduct().getStock() - cartProduct.getQuantity() < 0;
 
-        boolean cartHasNegativeStock = cart.getCartProducts().stream().anyMatch(hasNegativeStock);
+        boolean cartHasNegativeStock = cart.get().getCartProducts().stream().anyMatch(hasNegativeStock);
 
         if (cartHasNegativeStock) {
-            updateCart(cart, "Not enough stock to process cart id {}", CartStatus.FAILED);
+            updateCart(cart.get(), CartStatus.FAILED);
+            LOGGER.info("Not enough stock to process cart id {}");
         } else {
-            cart.getCartProducts().forEach(cartProduct -> {
+            cart.get().getCartProducts().forEach(cartProduct -> {
                 cartProduct.getProduct().removeFromStock(cartProduct.getQuantity());
-                LOGGER.info("Removed {} items from stock of product id {}", cartProduct.getQuantity(), cartProduct.getProduct().getId());
+                LOGGER.info("For cart {} removed {} items from stock of product id {}", cartId, cartProduct.getQuantity(), cartProduct.getProduct().getId());
                 productRepository.save(cartProduct.getProduct());
             });
-            updateCart(cart, "Cart id {} processed successfully", CartStatus.PROCESSED);
+            updateCart(cart.get(), CartStatus.PROCESSED);
         }
-        return cart;
+        return cart.get();
     }
 
-    private Cart updateCart(final Cart cart, final String message, final CartStatus status) {
-        LOGGER.error(message, cart.getId());
+    private Cart updateCart(final Cart cart, final CartStatus status) {
         cart.setStatus(status);
         cartRepository.save(cart);
         return cart;

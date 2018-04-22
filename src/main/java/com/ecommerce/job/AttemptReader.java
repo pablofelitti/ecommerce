@@ -1,6 +1,5 @@
 package com.ecommerce.job;
 
-import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.CartStatus;
 import com.ecommerce.repository.CartRepository;
 import org.slf4j.Logger;
@@ -19,12 +18,12 @@ import java.util.Iterator;
  */
 @StepScope
 @Component
-public class AttemptReader implements ItemReader<Cart> {
+public class AttemptReader implements ItemReader<Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttemptReader.class);
 
     private final CartRepository cartRepository;
-    private Iterable<Cart> cartsToProcess;
+    private Iterable<Long> cartsIdToProcess;
 
     @Autowired
     AttemptReader(final CartRepository cartRepository) {
@@ -32,20 +31,21 @@ public class AttemptReader implements ItemReader<Cart> {
     }
 
     @Override
-    public synchronized Cart read() {
+    public synchronized Long read() {
 
-        if (cartsToProcess == null) {
+        if (cartsIdToProcess == null) {
             LOGGER.info("Retrieving carts to process");
-            cartsToProcess = cartRepository.findByStatusOrderByCreationDateAsc(CartStatus.READY);
+            cartsIdToProcess = cartRepository.findIdByStatusReadyOrderByCreationDateAsc();
         } else {
             LOGGER.info("Carts have been already loaded");
         }
 
-        Iterator<Cart> iterator = cartsToProcess.iterator();
+        Iterator<Long> iterator = cartsIdToProcess.iterator();
         if (iterator.hasNext()) {
-            Cart cartToProcess = iterator.next();
+            Long cartIdToProcess = iterator.next();
             iterator.remove();
-            return cartToProcess;
+            LOGGER.info("Removed from list cart id {}", cartIdToProcess);
+            return cartIdToProcess;
         } else {
             LOGGER.info("No more carts to process");
             return null;
