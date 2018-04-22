@@ -6,6 +6,7 @@ import com.ecommerce.entity.CartStatus;
 import com.ecommerce.entity.Product;
 import com.ecommerce.exception.ErrorCode;
 import com.ecommerce.exception.MalformedRequestPayloadException;
+import com.ecommerce.exception.ResourceDoesNotExistException;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.ProductRepository;
 import org.junit.Test;
@@ -60,13 +61,13 @@ public class CartStockProcessServiceImplTest {
     }
 
     @Test
-    public void whenCartIdDoesNotFindAnyCartThenThrowException() {
+    public void whenCartIsNotFoundThenThrowException() {
         when(cartRepository.findById(55L)).thenReturn(Optional.empty());
 
         try {
             service.processCart(55L);
             fail("Should not have accepted to process cart");
-        } catch (MalformedRequestPayloadException e) {
+        } catch (ResourceDoesNotExistException e) {
             assertEquals(ErrorCode.CART_DOES_NOT_EXIST, e.getErrorCode());
         }
     }

@@ -60,7 +60,7 @@ public class CartStockProcessServiceImpl implements CartStockProcessService {
 
         if (cartHasNegativeStock) {
             updateCart(cart.get(), CartStatus.FAILED);
-            LOGGER.info("Not enough stock to process cart id {}");
+            LOGGER.info("Not enough stock to process cart id {}, setting status FAILED");
         } else {
             cart.get().getCartProducts().forEach(cartProduct -> {
                 cartProduct.getProduct().removeFromStock(cartProduct.getQuantity());
